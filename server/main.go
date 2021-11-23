@@ -1,6 +1,7 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
 	"log"
 	"net/http"
@@ -10,6 +11,11 @@ import (
 
 type User struct {
 	webs *websocket.Conn
+}
+
+type Message struct {
+	Username string
+	Content  string
 }
 
 var UserPool = make([]User, 0)
@@ -63,24 +69,35 @@ func reader(conn *websocket.Conn) {
 			return
 		}
 
-		// print out that message for clarity
-		fmt.Println(string(p))
+		var newMessage Message
+		err = json.Unmarshal(p, &newMessage)
+		if err != nil {
+			log.Println("Problem with message received, server ignored it")
+		}
 
-		// send message to other clients
-		broadcast(string(p), conn)
+		validMessage, err := json.Marshal(newMessage)
+		if err != nil {
+			log.Fatal(err)
+		}
+
+		broadcast(validMessage, conn)
 	}
 }
 
-func broadcast(message string, conn *websocket.Conn) {
+func broadcast(message []byte, conn *websocket.Conn) {
 	for _, element := range UserPool {
 		if element.webs != conn {
-			writer(element.webs, []byte(message))
+			writer(element.webs, message)
 		}
 	}
 }
 
 func writer(conn *websocket.Conn, message []byte) {
-	conn.WriteMessage(websocket.TextMessage, message)
+	err := conn.WriteMessage(websocket.TextMessage, message)
+	if err != nil {
+		log.Println(err)
+		return
+	}
 }
 
 // TODO Mettre sur une URL random recupéré en .env
