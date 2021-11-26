@@ -3,6 +3,7 @@ package main
 import (
 	"encoding/json"
 	"fmt"
+	"html"
 	"log"
 	"net/http"
 
@@ -40,7 +41,7 @@ func ws(w http.ResponseWriter, r *http.Request) {
 	log.Println("New client connected : ")
 	fmt.Println(newUser)
 
-	go reader(ws)
+	reader(ws)
 }
 
 func removeElem(uPool []User, i int) []User {
@@ -72,8 +73,10 @@ func reader(conn *websocket.Conn) {
 		var newMessage Message
 		err = json.Unmarshal(p, &newMessage)
 		if err != nil {
-			log.Println("Problem with message received, server ignored it")
+			log.Fatal(err)
 		}
+
+		newMessage.Content = html.EscapeString(newMessage.Content) // XSS
 
 		validMessage, err := json.Marshal(newMessage)
 		if err != nil {
