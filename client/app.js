@@ -17,7 +17,7 @@ socket.onmessage = message => {
     let p = document.createElement('p')
     let newMessage = JSON.parse(message.data)
     console.log(newMessage)
-    p.innerHTML = "<strong>" + newMessage['Username'] + "</strong><br>" + newMessage["Content"]
+    p.innerHTML = "<strong>" + newMessage['Username'] + "</strong><br>" + newMessage["Content"] + "<br>"
     document.querySelector('div').appendChild(p)
 };
 
@@ -26,6 +26,10 @@ let nicknameInput = document.querySelector('#nickname')
 
 document.querySelector("form").addEventListener('submit', e => {
     e.preventDefault()
-    socket.send(`{ "Username" : "${nicknameInput.value}", "Content" : "${messageInput.value}" }`)
+    let message = {
+        "Username" : nicknameInput.value,
+        "Content" : messageInput.value,
+    }
+    socket.send(JSON.stringify(message))
     messageInput.value = ""
 })
