@@ -6,8 +6,11 @@ import (
 	"html"
 	"log"
 	"net/http"
+	"os"
+	"path/filepath"
 
 	"github.com/gorilla/websocket"
+	"github.com/joho/godotenv"
 )
 
 type User struct {
@@ -38,8 +41,7 @@ func ws(w http.ResponseWriter, r *http.Request) {
 	var newUser = User{webs: ws}
 	UserPool = append(UserPool, newUser)
 
-	log.Println("New client connected : ")
-	fmt.Println(newUser)
+	log.Println("New client connected :", newUser)
 
 	reader(ws)
 }
@@ -50,7 +52,7 @@ func removeElem(uPool []User, i int) []User {
 }
 
 func testMessageIntegrity(message Message) bool {
-	fmt.Printf("%+v\n", message)
+	//fmt.Printf("%+v\n", message)
 	return message.Username == "" || message.Content == ""
 }
 
@@ -61,7 +63,7 @@ func reader(conn *websocket.Conn) {
 		// when client disconnect
 		if err != nil {
 			log.Println(err)
-			// remove user from userpool
+			// remove user from UserPool
 			for i, element := range UserPool {
 				if element.webs == conn {
 					UserPool = removeElem(UserPool, i)
@@ -114,10 +116,14 @@ func writer(conn *websocket.Conn, message []byte) {
 
 // TODO Mettre sur une URL random recupéré en .env
 func initServer() {
-	http.HandleFunc("/", ws)
+	http.HandleFunc(os.Getenv("ROUTE"), ws)
 }
 
 func main() {
+	err := godotenv.Load(filepath.Join("cmd", ".env"))
+	if err != nil {
+		log.Fatal(err)
+	}
 	fmt.Println("Starting server")
 	initServer()
 	log.Fatal(http.ListenAndServe(":8080", nil))
