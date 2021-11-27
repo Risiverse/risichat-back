@@ -26,6 +26,7 @@ let nicknameInput = document.querySelector('#nickname')
 
 document.querySelector("form").addEventListener('submit', e => {
     e.preventDefault()
+    
     let message = {
         "Username" : nicknameInput.value,
         "Content" : messageInput.value,

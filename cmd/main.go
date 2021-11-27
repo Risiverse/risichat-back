@@ -49,6 +49,11 @@ func removeElem(uPool []User, i int) []User {
 	return uPool[:len(uPool)-1]
 }
 
+func testMessageIntegrity(message Message) bool {
+	fmt.Printf("%+v\n", message)
+	return message.Username == "" || message.Content == ""
+}
+
 func reader(conn *websocket.Conn) {
 	for {
 		// read in a message
@@ -73,10 +78,14 @@ func reader(conn *websocket.Conn) {
 		var newMessage Message
 		err = json.Unmarshal(p, &newMessage)
 		if err != nil {
-			log.Fatal(err)
+			log.Println(err)
 		}
 
 		newMessage.Content = html.EscapeString(newMessage.Content) // XSS
+
+		if testMessageIntegrity(newMessage) {
+			continue
+		}
 
 		validMessage, err := json.Marshal(newMessage)
 		if err != nil {
