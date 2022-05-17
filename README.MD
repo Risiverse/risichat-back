@@ -4,4 +4,4 @@
 Made with NodeJs
 
 ## Environment variables
-- ./src : HOST <WS server address>, PORT <WS server port>
+- ./src : HOST (WS server address), PORT (WS server port)
