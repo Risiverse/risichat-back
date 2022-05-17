@@ -7,9 +7,18 @@ const WS = new WebSocketServer({
 })
 
 
-function broadcastWS(message) {
+function broadcastToAllClients(message) {
     WS.clients.forEach(client => {
         client.send(message)
+    })
+}
+
+
+function broadcastToAllClientsExceptSender(message, clientSender) {
+    WS.clients.forEach(client => {
+        if (!(client === clientSender)) {
+            client.send(message)
+        }
     })
 }
 
@@ -41,7 +50,7 @@ function connectionHandler(websocket, request) {
     console.log('New client connected')
 
     websocket.on('message', data => {
-        broadcastWS(messageHandler(data))
+        broadcastToAllClientsExceptSender(messageHandler(data))
     })
 
     websocket.on('close', () => {
