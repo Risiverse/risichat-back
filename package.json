@@ -1,0 +1,27 @@
+{
+  "name": "risichat-back",
+  "version": "1.0.0",
+  "description": "Risichat backend",
+  "type": "module",
+  "main": "app.js",
+  "scripts": {
+    "dev": "node src/app.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Risiverse/risichat-back.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Risiverse/risichat-back/issues"
+  },
+  "homepage": "https://github.com/Risiverse/risichat-back#readme",
+  "dependencies": {
+    "ws": "^8.6.0"
+  },
+  "devDependencies": {
+    "@types/node": "^17.0.34",
+    "@types/ws": "^8.5.3"
+  }
+}
