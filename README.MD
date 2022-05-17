@@ -4,4 +4,9 @@
 Made with NodeJs
 
 ## Environment variables
-- ./src : HOST (WS server address), PORT (WS server port)
+- ./src/.env :
+    - WS_HOST
+    - WS_PORT
+    - MONGO_HOST
+    - MONGO_DB
+    - MONGO_COLLECTION

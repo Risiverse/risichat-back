@@ -1,9 +1,10 @@
-import { WebSocketServer } from 'ws';
+import { WebSocketServer } from 'ws'
 import 'dotenv/config'
+import { initDatabase, closeDatabase, insertMessageIntoDB } from './databaseOperations.js'
 
 const WS = new WebSocketServer({
-    host: process.env.HOST,
-    port: process.env.PORT,
+    host: process.env.WS_HOST,
+    port: process.env.WS_PORT,
 })
 
 
@@ -35,7 +36,7 @@ function escapeUnsafeMessageData(messageData) {
 }
 
 
-function messageHandler(messageData) {
+function messageParser(messageData) {
     const receivedJSON = JSON.parse(messageData.toString())
     receivedJSON.Username = escapeUnsafeMessageData(receivedJSON.Username)
     receivedJSON.Content = escapeUnsafeMessageData(receivedJSON.Content)
@@ -48,11 +49,14 @@ function connectionHandler(websocket, request) {
     console.log('New client connected')
 
     websocket.on('message', data => {
-        broadcastToAllClientsExceptSender(messageHandler(data))
+        const parsedMessage = messageParser(data)
+        broadcastToAllClientsExceptSender(parsedMessage)
+        insertMessageIntoDB(parsedMessage)
     })
 
     websocket.on('close', () => {
         console.log('Client disconnected')
+        closeDatabase()
     })
 }
 
@@ -69,6 +73,7 @@ function disconnectHandler() {
 
 WS.on('listening', () => {
     console.log('Server listening.')
+    initDatabase()
 })
 
 WS.on('connection', connectionHandler)

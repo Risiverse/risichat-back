@@ -19,6 +19,7 @@
   "homepage": "https://github.com/Risiverse/risichat-back#readme",
   "dependencies": {
     "dotenv": "^16.0.1",
+    "mongodb": "^4.6.0",
     "ws": "^8.6.0"
   },
   "devDependencies": {
