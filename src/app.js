@@ -1,9 +1,9 @@
 import { WebSocketServer } from 'ws';
-
+import 'dotenv/config'
 
 const WS = new WebSocketServer({
-    host: 'localhost',
-    port: 9999,
+    host: process.env.HOST,
+    port: process.env.PORT,
 })
 
 
@@ -45,8 +45,6 @@ function messageHandler(messageData) {
 
 
 function connectionHandler(websocket, request) {
-    request.setEncoding('utf-8')
-
     console.log('New client connected')
 
     websocket.on('message', data => {
