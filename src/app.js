@@ -2,9 +2,10 @@ import { WebSocketServer } from 'ws'
 import 'dotenv/config'
 import { initDatabase, closeDatabase, insertMessageIntoDB } from './databaseOperations.js'
 
+
 const WS = new WebSocketServer({
     host: process.env.WS_HOST,
-    port: process.env.WS_PORT,
+    port: parseInt(process.env.WS_PORT),
 })
 
 
@@ -26,7 +27,6 @@ function broadcastToAllClientsExceptSender(message, clientSender) {
 
 function escapeUnsafeMessageData(messageData) {
     if (!messageData) return ""
-
     return messageData
         .replaceAll('&', '&amp;')
         .replaceAll('<', '&lt;')
@@ -45,13 +45,18 @@ function messageParser(messageData) {
 }
 
 
-function connectionHandler(websocket, request) {
+function messageHandler(messageData, websocket) {
+    const parsedMessage = messageParser(messageData)
+    broadcastToAllClientsExceptSender(parsedMessage, websocket)
+    insertMessageIntoDB(parsedMessage)
+}
+
+
+function serverConnectionHandler(websocket, request) {
     console.log('New client connected')
 
-    websocket.on('message', data => {
-        const parsedMessage = messageParser(data)
-        broadcastToAllClientsExceptSender(parsedMessage, websocket)
-        insertMessageIntoDB(parsedMessage)
+    websocket.on('message', messageData => {
+        messageHandler(messageData, websocket)
     })
 
     websocket.on('close', () => {
@@ -60,24 +65,27 @@ function connectionHandler(websocket, request) {
 }
 
 
-function errorHandler(error) {
+function serverErrorHandler(error) {
     console.log(error)
 }
 
 
-function disconnectHandler() {
+function serverDisconnectHandler() {
     closeDatabase()
     console.log('Server closed.')
 }
 
 
-WS.on('listening', () => {
-    console.log('Server listening.')
+function serverListeningHandler() {
     initDatabase()
-})
+    console.log('Server listening...')
+}
 
-WS.on('connection', connectionHandler)
 
-WS.on('close', disconnectHandler)
+WS.on('listening', serverListeningHandler)
 
-WS.on('error', errorHandler)
+WS.on('connection', serverConnectionHandler)
+
+WS.on('close', serverDisconnectHandler)
+
+WS.on('error', serverErrorHandler)
