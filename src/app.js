@@ -50,7 +50,7 @@ function connectionHandler(websocket, request) {
 
     websocket.on('message', data => {
         const parsedMessage = messageParser(data)
-        broadcastToAllClientsExceptSender(parsedMessage)
+        broadcastToAllClientsExceptSender(parsedMessage, websocket)
         insertMessageIntoDB(parsedMessage)
     })
 
