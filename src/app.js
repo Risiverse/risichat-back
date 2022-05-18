@@ -56,7 +56,6 @@ function connectionHandler(websocket, request) {
 
     websocket.on('close', () => {
         console.log('Client disconnected')
-        closeDatabase()
     })
 }
 
@@ -67,6 +66,7 @@ function errorHandler(error) {
 
 
 function disconnectHandler() {
+    closeDatabase()
     console.log('Server closed.')
 }
 
