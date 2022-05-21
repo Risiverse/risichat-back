@@ -1,4 +1,5 @@
 import { MongoClient } from "mongodb"
+import 'dotenv/config'
 
 
 const mongoClient = new MongoClient(process.env.MONGO_HOST)
