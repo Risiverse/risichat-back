@@ -1,8 +1,9 @@
 import { broadcastToAllClientsExceptSender } from './appServer.js'
 import { insertMessageIntoDB } from './appDatabase.js'
+import { RawData, WebSocket } from 'ws'
 
 
-function escapeUnsafeMessageData(messageData) {
+function escapeUnsafeMessageData(messageData: string) {
     if (!messageData) return ""
     return messageData
         .replaceAll('&', '&amp;')
@@ -13,7 +14,7 @@ function escapeUnsafeMessageData(messageData) {
 }
 
 
-function messageParser(messageData) {
+function messageParser(messageData: RawData) {
     const receivedJSON = JSON.parse(messageData.toString())
     receivedJSON.Username = escapeUnsafeMessageData(receivedJSON.Username)
     receivedJSON.Content = escapeUnsafeMessageData(receivedJSON.Content)
@@ -22,7 +23,7 @@ function messageParser(messageData) {
 }
 
 
-export function messageHandler(messageData, websocket) {
+export function messageHandler(messageData: RawData, websocket: WebSocket) {
     const parsedMessage = messageParser(messageData)
     broadcastToAllClientsExceptSender(parsedMessage, websocket)
     insertMessageIntoDB(parsedMessage)

@@ -1,16 +1,17 @@
-import { initDatabase, closeDatabase, insertMessageIntoDB } from './appDatabase.js'
+import { initDatabase, closeDatabase } from './appDatabase.js'
 import { messageHandler } from './appServerMessages.js'
 import { WS } from './app.js'
+import WebSocket from 'ws'
 
 
-export function broadcastToAllClients(message) {
+export function broadcastToAllClients(message: string) {
     WS.clients.forEach(client => {
         client.send(message)
     })
 }
 
 
-export function broadcastToAllClientsExceptSender(message, clientSender) {
+export function broadcastToAllClientsExceptSender(message: string, clientSender: WebSocket) {
     WS.clients.forEach(client => {
         if (!(client === clientSender)) {
             client.send(message)
@@ -19,9 +20,7 @@ export function broadcastToAllClientsExceptSender(message, clientSender) {
 }
 
 
-export function serverConnectionHandler(websocket, request) {
-    console.log('New client connected')
-
+export function serverConnectionHandler(websocket: WebSocket) {
     websocket.on('message', messageData => {
         messageHandler(messageData, websocket)
     })
@@ -32,7 +31,7 @@ export function serverConnectionHandler(websocket, request) {
 }
 
 
-export function serverErrorHandler(error) {
+export function serverErrorHandler(error: Error) {
     console.log(error)
 }
 

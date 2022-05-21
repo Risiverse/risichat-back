@@ -2,9 +2,13 @@ import { serverListeningHandler, serverConnectionHandler, serverDisconnectHandle
 import { WebSocketServer } from 'ws'
 
 
+const host: string = process.env['WS_HOST'] ? process.env['WS_HOST'] : 'locahost'
+const port: number = process.env['WS_PORT'] ? parseInt(process.env['WS_PORT']) : 9999
+
+
 export const WS = new WebSocketServer({
-    host: process.env.WS_HOST,
-    port: parseInt(process.env.WS_PORT),
+    host,
+    port,
 })
 
 
