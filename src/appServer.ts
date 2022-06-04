@@ -26,7 +26,7 @@ export function serverConnectionHandler(websocket: WebSocket) {
     })
 
     websocket.on('close', () => {
-        console.log('Client disconnected')
+        // console.log('Client disconnected')
     })
 }
 
@@ -44,5 +44,5 @@ export function serverDisconnectHandler() {
 
 export function serverListeningHandler() {
     initDatabase()
-    console.log('Server listening...')
+    console.log('Server started.')
 }

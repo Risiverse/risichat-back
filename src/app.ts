@@ -11,6 +11,7 @@ export const WS = new WebSocketServer({
     port,
 })
 
+console.log('Starting WS server...')
 
 WS.on('listening', serverListeningHandler)
 
