@@ -3,6 +3,13 @@ import { insertMessageIntoDB } from './appDatabase'
 import { RawData, WebSocket } from 'ws'
 
 
+interface Message {
+    timestamp: number,
+    username: string,
+    content: string
+}
+
+
 export function escapeUnsafeMessageData(messageData: string) {
     if (!messageData) return ""
     return messageData
@@ -15,16 +22,26 @@ export function escapeUnsafeMessageData(messageData: string) {
 
 
 function messageParser(messageData: RawData) {
-    const receivedJSON = JSON.parse(messageData.toString())
-    receivedJSON.Username = escapeUnsafeMessageData(receivedJSON.Username)
-    receivedJSON.Content = escapeUnsafeMessageData(receivedJSON.Content)
-    console.log(receivedJSON)
-    return JSON.stringify(receivedJSON)
+    const receivedJSON: Message = JSON.parse(messageData.toString())
+    const parsedJSON: Message = {
+        timestamp: receivedJSON.timestamp,
+        username: escapeUnsafeMessageData(receivedJSON.username),
+        content: escapeUnsafeMessageData(receivedJSON.content)
+    }
+    console.log(parsedJSON)
+    return JSON.stringify(parsedJSON)
+}
+
+
+function isMessageValid(message: Message) {
+    return message.content && message.username && message.timestamp
 }
 
 
 export function messageHandler(messageData: RawData, websocket: WebSocket) {
     const parsedMessage = messageParser(messageData)
-    broadcastToAllClientsExceptSender(parsedMessage, websocket)
-    insertMessageIntoDB(parsedMessage)
+    if (isMessageValid(JSON.parse(parsedMessage))) {
+        broadcastToAllClientsExceptSender(parsedMessage, websocket)
+        insertMessageIntoDB(parsedMessage)
+    }
 }
