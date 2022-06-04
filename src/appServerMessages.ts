@@ -1,9 +1,9 @@
-import { broadcastToAllClientsExceptSender } from './appServer.js'
-import { insertMessageIntoDB } from './appDatabase.js'
+import { broadcastToAllClientsExceptSender } from './appServer'
+import { insertMessageIntoDB } from './appDatabase'
 import { RawData, WebSocket } from 'ws'
 
 
-function escapeUnsafeMessageData(messageData: string) {
+export function escapeUnsafeMessageData(messageData: string) {
     if (!messageData) return ""
     return messageData
         .replaceAll('&', '&amp;')

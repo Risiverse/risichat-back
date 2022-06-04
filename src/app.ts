@@ -1,4 +1,4 @@
-import { serverListeningHandler, serverConnectionHandler, serverDisconnectHandler, serverErrorHandler } from './appServer.js'
+import { serverListeningHandler, serverConnectionHandler, serverDisconnectHandler, serverErrorHandler } from './appServer'
 import { WebSocketServer } from 'ws'
 
 

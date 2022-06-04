@@ -1,6 +1,6 @@
-import { initDatabase, closeDatabase } from './appDatabase.js'
-import { messageHandler } from './appServerMessages.js'
-import { WS } from './app.js'
+import { initDatabase, closeDatabase } from './appDatabase'
+import { messageHandler } from './appServerMessages'
+import { WS } from './app'
 import WebSocket from 'ws'
 
 
