@@ -28,7 +28,6 @@ function messageParser(messageData: RawData): string {
         username: escapeUnsafeMessageData(receivedJSON.username),
         content: escapeUnsafeMessageData(receivedJSON.content)
     }
-    console.log(parsedJSON)
     return JSON.stringify(parsedJSON)
 }
 
@@ -54,10 +53,14 @@ function isMessageValid(message: Message): boolean {
 
 
 export function messageHandler(messageData: RawData, websocket: WebSocket): void {
-    const parsedMessage = messageParser(messageData)
-    if (isMessageValid(JSON.parse(parsedMessage))) {
-        broadcastToAllClientsExceptSender(parsedMessage, websocket)
-        insertMessageIntoDB(parsedMessage)
+    const messageDataJSON = JSON.parse(messageData.toString())
+
+    console.log(messageDataJSON)
+
+    if (isMessageValid(messageDataJSON)) {
+        const validParsedMessage = messageParser(messageData)
+        broadcastToAllClientsExceptSender(validParsedMessage, websocket)
+        insertMessageIntoDB(validParsedMessage)
         console.log('Message valid')
     } else {
         console.log('Message invalid')
