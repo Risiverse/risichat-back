@@ -1,17 +1,17 @@
 import { initDatabase, closeDatabase } from './appDatabase'
 import { messageHandler } from './appServerMessages'
 import { WS } from './app'
-import WebSocket from 'ws'
+import type WebSocket from 'ws'
 
 
-export function broadcastToAllClients(message: string) {
+export function broadcastToAllClients(message: string): void {
     WS.clients.forEach(client => {
         client.send(message)
     })
 }
 
 
-export function broadcastToAllClientsExceptSender(message: string, clientSender: WebSocket) {
+export function broadcastToAllClientsExceptSender(message: string, clientSender: WebSocket): void {
     WS.clients.forEach(client => {
         if (!(client === clientSender)) {
             client.send(message)
@@ -20,7 +20,7 @@ export function broadcastToAllClientsExceptSender(message: string, clientSender:
 }
 
 
-export function serverConnectionHandler(websocket: WebSocket) {
+export function serverConnectionHandler(websocket: WebSocket): void {
     websocket.on('message', messageData => {
         messageHandler(messageData, websocket)
     })
@@ -31,18 +31,18 @@ export function serverConnectionHandler(websocket: WebSocket) {
 }
 
 
-export function serverErrorHandler(error: Error) {
+export function serverErrorHandler(error: Error): void {
     console.log(error)
 }
 
 
-export function serverDisconnectHandler() {
+export function serverDisconnectHandler(): void {
     closeDatabase()
     console.log('Server closed.')
 }
 
 
-export function serverListeningHandler() {
+export function serverListeningHandler(): void {
     initDatabase()
     console.log('Server started.')
 }

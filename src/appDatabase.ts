@@ -12,18 +12,18 @@ const database = mongoClient.db(process.env['MONGO_DB'])
 const collection = database.collection(process.env['MONGO_COLLECTION'])
 
 
-export async function initDatabase() {
+export async function initDatabase(): Promise<void> {
     console.log('Connection to MongoDB...')
     await mongoClient.connect()
     console.log('Connection with MongoDB established.')
 }
 
 
-export async function insertMessageIntoDB(message: string) {
+export async function insertMessageIntoDB(message: string): Promise<void> {
     await collection.insertOne(JSON.parse(message))
 }
 
 
-export function closeDatabase() {
+export function closeDatabase(): void {
     mongoClient.close()
 }
