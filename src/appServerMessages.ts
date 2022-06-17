@@ -28,7 +28,7 @@ export function escapeUnsafeMessageData(messageData: string): string {
 
 function chatMessageParser(messageData: chatMessage): string {
     const parsedJSON: chatMessage = {
-        timestamp: messageData.timestamp,
+        timestamp: Date.now(),
         username: escapeUnsafeMessageData(messageData.username),
         content: escapeUnsafeMessageData(messageData.content)
     }
@@ -43,16 +43,9 @@ function isStringValid(field: string|null): boolean {
 }
 
 
-function isNumberValid(field: number|null): boolean {
-    return field != undefined &&
-        (typeof field) === 'number'
-}
-
-
 function isChatMessageValid(message: chatMessage): boolean {
     return isStringValid(message.content) &&
-        isStringValid(message.username) &&
-        isNumberValid(message.timestamp)
+        isStringValid(message.username)
 }
 
 
