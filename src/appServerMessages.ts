@@ -58,7 +58,7 @@ function chatMessageHandler(messageData: any, senderWS: WebSocket): void {
     } else {
         senderWS.send(JSON.stringify({
             status: 400,
-            message: 'The message could not be validated.',
+            message: 'The message could not be validated. Be sure to respect the JSON format.',
             data: messageData
         }))
         console.log('Invalid message')
@@ -72,9 +72,18 @@ const messagesTypesHandlers = [
 
 
 export function messageHandler(messageData: RawData, senderWS: WebSocket): void {
-    const messageDataJSON: Message = JSON.parse(messageData.toString())
+    let messageDataJSON: Message
 
-    console.log(messageDataJSON)
+    try {
+        messageDataJSON = JSON.parse(messageData.toString())
+    } catch (error) {
+        senderWS.send(JSON.stringify({
+            status: 400,
+            message: 'Invalid WS message. Be sure to send stringified JSON.',
+            data: messageData
+        }))
+        return
+    }
 
     messagesTypesHandlers.find(handlers => handlers.type === messageDataJSON.type)
         ?.handler(messageDataJSON.data, senderWS)
