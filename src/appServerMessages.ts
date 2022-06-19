@@ -28,7 +28,7 @@ export function escapeUnsafeMessageData(messageData: string): string {
 
 function chatMessageParser(messageData: chatMessage): string {
     const parsedJSON: chatMessage = {
-        timestamp: messageData.timestamp,
+        timestamp: Date.now(),
         username: escapeUnsafeMessageData(messageData.username),
         content: escapeUnsafeMessageData(messageData.content)
     }
@@ -43,16 +43,9 @@ function isStringValid(field: string|null): boolean {
 }
 
 
-function isNumberValid(field: number|null): boolean {
-    return field != undefined &&
-        (typeof field) === 'number'
-}
-
-
 function isChatMessageValid(message: chatMessage): boolean {
     return isStringValid(message.content) &&
-        isStringValid(message.username) &&
-        isNumberValid(message.timestamp)
+        isStringValid(message.username)
 }
 
 
@@ -65,7 +58,7 @@ function chatMessageHandler(messageData: any, senderWS: WebSocket): void {
     } else {
         senderWS.send(JSON.stringify({
             status: 400,
-            message: 'The message could not be validated.',
+            message: 'The message could not be validated. Be sure to respect the JSON format.',
             data: messageData
         }))
         console.log('Invalid message')
@@ -79,9 +72,18 @@ const messagesTypesHandlers = [
 
 
 export function messageHandler(messageData: RawData, senderWS: WebSocket): void {
-    const messageDataJSON: Message = JSON.parse(messageData.toString())
+    let messageDataJSON: Message
 
-    console.log(messageDataJSON)
+    try {
+        messageDataJSON = JSON.parse(messageData.toString())
+    } catch (error) {
+        senderWS.send(JSON.stringify({
+            status: 400,
+            message: 'Invalid WS message. Be sure to send stringified JSON.',
+            data: messageData
+        }))
+        return
+    }
 
     messagesTypesHandlers.find(handlers => handlers.type === messageDataJSON.type)
         ?.handler(messageDataJSON.data, senderWS)
