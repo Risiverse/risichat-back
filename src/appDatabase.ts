@@ -15,7 +15,7 @@ const collection = database.collection(process.env['MONGO_COLLECTION'])
 export async function initDatabase(): Promise<void> {
     console.log('Connection to MongoDB...')
     await mongoClient.connect()
-    console.log('Connection with MongoDB established.')
+    console.log('Connection with MongoDB established !')
 }
 
 
