@@ -1,19 +1,7 @@
-import { broadcastToAllClientsExceptSender } from './appServer'
+import { broadcastToAllClients } from './appServer'
 import { insertMessageIntoDB } from './appDatabase'
 import type { RawData, WebSocket } from 'ws'
-
-interface chatMessage {
-    timestamp: number,
-    username: string,
-    content: string
-}
-
-interface Message {
-    userSSOID: number,
-    type: string,
-    data: chatMessage
-}
-
+import type { serverMessage, clientMessage, chatMessage } from './appServerMessages.interfaces'
 
 export function escapeUnsafeMessageData(messageData: string): string {
     if (!messageData) return ""
@@ -25,12 +13,26 @@ export function escapeUnsafeMessageData(messageData: string): string {
         .replaceAll("'", '&#039;')
 }
 
+function sendChatMessageError(senderWS: WebSocket, message: string, data: any): void {
+    const response: serverMessage = {
+        type: 'error',
+        data: {
+            status: 400,
+            message,
+            data
+        }
+    }
+    senderWS.send(JSON.stringify(response))
+}
 
 function chatMessageParser(messageData: chatMessage): string {
-    const parsedJSON: chatMessage = {
-        timestamp: Date.now(),
-        username: escapeUnsafeMessageData(messageData.username),
-        content: escapeUnsafeMessageData(messageData.content)
+    const parsedJSON: serverMessage = {
+        type: 'newMessage',
+        data: {
+            timestamp: Date.now(),
+            username: escapeUnsafeMessageData(messageData.username),
+            content: escapeUnsafeMessageData(messageData.content)
+        }
     }
     return JSON.stringify(parsedJSON)
 }
@@ -43,45 +45,42 @@ function isStringValid(field: string|null): boolean {
 }
 
 
-function isChatMessageValid(message: chatMessage): boolean {
-    return isStringValid(message.content) &&
-        isStringValid(message.username)
+function isChatMessageValid(messageData: chatMessage): boolean {
+    if (messageData.content == undefined) return false
+    return isStringValid(messageData.content) &&
+        isStringValid(messageData.username)
 }
 
 
-function chatMessageHandler(messageData: any, senderWS: WebSocket): void {
+function chatMessageHandler(messageData: chatMessage, senderWS: WebSocket): void {
     if (isChatMessageValid(messageData)) {
         const validParsedMessage = chatMessageParser(messageData)
-        broadcastToAllClientsExceptSender(validParsedMessage, senderWS)
+        broadcastToAllClients(validParsedMessage)
         insertMessageIntoDB(validParsedMessage)
-        console.log('Valid message')
     } else {
-        senderWS.send(JSON.stringify({
-            status: 400,
-            message: 'The message could not be validated. Be sure to respect the JSON format.',
-            data: messageData
-        }))
-        console.log('Invalid message')
+        sendChatMessageError(
+            senderWS,
+            'The message could not be validated. Be sure to respect the JSON format.',
+            messageData)
     }
 }
 
 
 const messagesTypesHandlers = [
-    { type: 'chatMessage', handler: chatMessageHandler }
+    { type: 'newMessage', handler: chatMessageHandler }
 ]
 
 
 export function messageHandler(messageData: RawData, senderWS: WebSocket): void {
-    let messageDataJSON: Message
+    let messageDataJSON: clientMessage
 
     try {
         messageDataJSON = JSON.parse(messageData.toString())
     } catch (error) {
-        senderWS.send(JSON.stringify({
-            status: 400,
-            message: 'Invalid WS message. Be sure to send stringified JSON.',
-            data: messageData
-        }))
+        sendChatMessageError(
+            senderWS,
+            'Invalid WS message. Be sure to send stringified JSON.',
+            messageData)
         return
     }
 

@@ -44,5 +44,5 @@ export function serverDisconnectHandler(): void {
 
 export function serverListeningHandler(): void {
     initDatabase()
-    console.log('Server started.')
+    console.log('[OK] Server started.')
 }
