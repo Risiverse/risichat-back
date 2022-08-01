@@ -11,11 +11,10 @@ const mongoClient = new MongoClient(process.env['MONGO_HOST'])
 const database = mongoClient.db(process.env['MONGO_DB'])
 const collection = database.collection(process.env['MONGO_COLLECTION'])
 
-
 export async function initDatabase(): Promise<void> {
-    console.log('Connection to MongoDB...')
+    console.log('\x1b[33m', 'Connection to MongoDB...')
     await mongoClient.connect()
-    console.log('[OK] Connection with MongoDB established.')
+    console.log('\x1b[32m', '[OK] Connection with MongoDB established.')
 }
 
 
