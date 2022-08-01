@@ -36,22 +36,3 @@ All JSON requests should be stringified.
     }
 }
 ```
-#### User status update
-```javascript
-{
-    type: 'userStatusUpdate',
-    data: {
-        status: 'connected',
-        username: 'Didier Deschamps'
-    }
-}
-```
-```javascript
-{
-    type: 'userStatusUpdate',
-    data: {
-        status: 'disconnected',
-        username: 'Didier Deschamps'
-    }
-}
-```
