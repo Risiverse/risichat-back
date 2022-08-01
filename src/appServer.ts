@@ -25,8 +25,20 @@ export function serverConnectionHandler(websocket: WebSocket): void {
         messageHandler(messageData, websocket)
     })
 
+    broadcastToAllClientsExceptSender(JSON.stringify({
+        type: 'newConnection',
+        data: {
+            message: 'A new user has logged in.'
+        }
+    }), websocket)
+
     websocket.on('close', () => {
-        // console.log('Client disconnected')
+        broadcastToAllClientsExceptSender(JSON.stringify({
+        type: 'newConnection',
+        data: {
+            message: 'A user has logged out.'
+        }
+    }), websocket)
     })
 }
 

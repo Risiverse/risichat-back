@@ -4,6 +4,10 @@ export interface chatMessage {
     content: string
 }
 
+export interface connectionMessage {
+    message: string
+}
+
 export interface errorMessage {
     status: number,
     message: string,
@@ -18,5 +22,5 @@ export interface clientMessage {
 
 export interface serverMessage {
     type: string,
-    data: chatMessage | errorMessage
+    data: chatMessage | errorMessage | connectionMessage
 }

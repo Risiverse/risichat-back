@@ -36,3 +36,20 @@ All JSON requests should be stringified.
     }
 }
 ```
+#### User status update
+```javascript
+{
+    type: 'newConnection',
+    data: {
+        message: 'A new user has logged in.'
+    }
+}
+```
+```javascript
+{
+    type: 'newDisconnection',
+    data: {
+        message: 'A user has logged out.'
+    }
+}
+```
