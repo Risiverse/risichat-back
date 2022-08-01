@@ -1,9 +1,5 @@
 node_modules
 dist
-<<<<<<< HEAD
 .env
 coverage
-=======
-.idea
-.env
->>>>>>> 88a2235ec87b0260e40dd4c407211fe5b0b50f51
+*.tsbuildinfo
