@@ -25,7 +25,10 @@
     "noUncheckedIndexedAccess": true,                 /* Include 'undefined' in index signature results */
     "noImplicitOverride": true,                       /* Ensure overriding members in derived classes are marked with an override modifier. */
     "noPropertyAccessFromIndexSignature": true,       /* Enforces using indexed accessors for keys declared using an indexed type */
+    "assumeChangesOnlyAffectDirectDependencies": true,
+    "types": [],
+    "skipDefaultLibCheck": true
   },
   "include": ["src"],
-  "exclude": ["**/node_modules"]
+  "exclude": ["**/node_modules", "**/.*/"]
 }
