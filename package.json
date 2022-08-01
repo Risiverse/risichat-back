@@ -4,10 +4,10 @@
   "description": "Risichat backend",
   "scripts": {
     "tsc": "tsc",
+    "build": "npm run tsc -- --build",
+    "start": "rimraf ./dist/ && concurrently \"npm run build\" \"npm run launch\"",
     "dev": "nodemon",
-    "start": "concurrently \"npm run build\" \"npm run launch\"",
     "launch": "wait-on ./dist/app.js && node ./dist/app.js",
-    "build": "npm run tsc -- --build --incremental",
     "serve": "node ./dist/app.js"
   },
   "repository": {
@@ -31,6 +31,7 @@
   "devDependencies": {
     "@types/node": "^17.0.35",
     "@types/ws": "^8.5.3",
-    "nodemon": "^2.0.19"
+    "nodemon": "^2.0.19",
+    "rimraf": "^3.0.2"
   }
 }
