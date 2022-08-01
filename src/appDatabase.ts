@@ -1,5 +1,6 @@
 import { MongoClient } from "mongodb"
 import 'dotenv/config'
+import { serverMessage } from "./appServerMessages.interfaces";
 
 
 if (!process.env['MONGO_HOST'] || !process.env['MONGO_DB'] || !process.env['MONGO_COLLECTION']) {
@@ -19,7 +20,8 @@ export async function initDatabase(): Promise<void> {
 
 
 export async function insertMessageIntoDB(message: string): Promise<void> {
-    await collection.insertOne(JSON.parse(message))
+    const parsedChatMessage: serverMessage = JSON.parse(message)
+    await collection.insertOne(parsedChatMessage.data)
 }
 
 
