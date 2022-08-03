@@ -1,35 +1,21 @@
 import org.json.JSONException;
 import org.json.JSONObject;
 
-public abstract class ClientMessage {
-    private final JSONObject message;
+import java.util.Optional;
 
-    public abstract JSONObject getParsedMessage();
-    public abstract JSONObject validateMessage(JSONObject message);
-    public abstract boolean shouldBroadcast();
-    public abstract boolean shouldInsertIntoDB();
+public sealed interface ClientMessage permits ClientChatMessage {
+    JSONObject getMessage();
+    JSONObject getParsedMessage();
+    JSONObject validateMessage(JSONObject message);
+    boolean shouldBroadcast();
+    boolean shouldInsertIntoDB();
 
-    public ClientMessage(JSONObject message) {
-        this.message = message;
-    }
-
-    public static JSONObject validateClientMessage(String message) throws JSONException {
-        JSONObject parsedClientMessage;
-        try {
-            parsedClientMessage = new JSONObject(message);
-        } catch (JSONException exception) {
-            throw new JSONException("Invalid message format. Be sure to send stringified JSON.");
-        }
-        try {
-            parsedClientMessage.getString("type");
-            parsedClientMessage.getJSONObject("data");
-        } catch (JSONException exception) {
-            throw new JSONException("'type' and 'data' fields are not in your message or has wrong values.");
-        }
-        return parsedClientMessage;
-    }
-
-    public JSONObject getMessage() {
-        return message;
+    static Optional<JSONObject> validateClientMessage(String message) throws JSONException {
+        var msg = new JSONObject(message);
+        JSONObject parsedMsg = switch (msg.getString("type")) {
+            case "newMessage" -> new ClientChatMessage(msg).getParsedMessage();
+            default -> null;
+        };
+        return Optional.ofNullable(parsedMsg);
     }
 }

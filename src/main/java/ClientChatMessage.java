@@ -1,9 +1,10 @@
 import org.json.JSONException;
 import org.json.JSONObject;
 
-public class ClientChatMessage extends ClientMessage {
-    public ClientChatMessage(JSONObject message) {
-        super(message);
+public record ClientChatMessage(JSONObject message) implements ClientMessage {
+    @Override
+    public JSONObject getMessage() {
+        return message;
     }
 
     @Override
