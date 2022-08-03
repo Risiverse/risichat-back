@@ -29,7 +29,6 @@ java -jar ./target/risichat-back-jar-with-dependencies.jar
 (or replace ``./target/risichat-back-jar-with-dependencies.jar`` with whatever name you gave it and/or where it is located)
 ## Environment variables
 - ./env
-  - WS_HOST
   - WS_PORT
   - MONGO_HOST
   - MONGO_DB
