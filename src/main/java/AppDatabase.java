@@ -16,6 +16,5 @@ public class AppDatabase {
     public void insertMessage(String stringifiedJsonMessage) {
         Document parsedBsonMessage = Document.parse(stringifiedJsonMessage);
         mongoCollection.insertOne(parsedBsonMessage);
-        System.out.println(parsedBsonMessage);
     }
 }

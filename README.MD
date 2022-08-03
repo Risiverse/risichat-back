@@ -4,7 +4,7 @@
 Made with NodeJs
 
 ## Environment variables
-- ./src/.env
+- ./env
   - WS_HOST
   - WS_PORT
   - MONGO_HOST
