@@ -1,9 +1,8 @@
-import org.java_websocket.WebSocket;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-public class AppChatMessage extends AppClientMessage {
-    public AppChatMessage(JSONObject message) {
+public class ClientChatMessage extends ClientMessage {
+    public ClientChatMessage(JSONObject message) {
         super(message);
     }
 

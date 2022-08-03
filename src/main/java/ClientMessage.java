@@ -1,8 +1,7 @@
-import org.java_websocket.WebSocket;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-public abstract class AppClientMessage {
+public abstract class ClientMessage {
     private final JSONObject message;
 
     public abstract JSONObject getParsedMessage();
@@ -10,7 +9,7 @@ public abstract class AppClientMessage {
     public abstract boolean shouldBroadcast();
     public abstract boolean shouldInsertIntoDB();
 
-    public AppClientMessage(JSONObject message) {
+    public ClientMessage(JSONObject message) {
         this.message = message;
     }
 
