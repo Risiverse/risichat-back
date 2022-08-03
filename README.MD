@@ -1,6 +1,17 @@
 # risichat-back
-## Risichat backend
+- [Risichat backend](#risichat-backend)
+  - [Use with Docker](#use-with-docker)
+  - [Build and run it yourself](#build-and-run-it-yourself)
+- [Environment variables](#environment-variables)
+- [DTOs](#dtos)
+  - [Client to server](#client-to-server)
+    - [New message (to server)](#new-message-to-server)
+  - [Server to client](#server-to-client)
+    - [New message (to clients)](#new-message-to-clients)
+    - [User status update](#user-status-update)
+    - [Other](#other)
 
+## Risichat backend
 Made with Java, Maven, bson, dotenv-java, Java-WebSocket, json, mongodb-driver-sync, slf4j-api, slf4j-log4j12.
 
 ### Use with Docker
@@ -37,6 +48,7 @@ java -jar ./target/risichat-back-jar-with-dependencies.jar
 ## DTOs
 All JSON requests should be stringified.
 ### Client to server
+#### New message (to server)
 ```JSON
 {
     "type": "newMessage",
@@ -48,7 +60,7 @@ All JSON requests should be stringified.
 }
 ```
 ### Server to client
-#### New message
+#### New message (to clients)
 ```JSON
 {
     "type": "newMessage",
