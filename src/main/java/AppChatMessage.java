@@ -3,35 +3,31 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 public class AppChatMessage extends AppClientMessage {
-    public AppChatMessage(WebSocket senderWS, String message) {
-        super(senderWS, message);
+    public AppChatMessage(JSONObject message) {
+        super(message);
     }
 
     @Override
-    public JSONObject messageParser() {
-        long timestamp;
-        String username, content;
-
-        try {
-            JSONObject messageData = getMessageData();
-            timestamp = System.currentTimeMillis();
-            username = messageData.getString("username");
-            content = messageData.getString("content");
-        } catch (JSONException error) {
-            sendMessageError("JSON Format not valid.", 400);
-            return null;
-        }
-
+    public JSONObject getParsedMessage() {
+        JSONObject data = validateMessage(getMessage());
         JSONObject parsedMessage = new JSONObject();
         parsedMessage.put("type", "newMessage");
-
-        JSONObject data = new JSONObject();
-        data.put("timestamp", timestamp);
-        data.put("username", username);
-        data.put("content", content);
-
         parsedMessage.put("data", data);
         return parsedMessage;
+    }
+
+    @Override
+    public JSONObject validateMessage(JSONObject message) throws JSONException {
+        JSONObject messageData = message.getJSONObject("data");
+        JSONObject validatedMessage = new JSONObject();
+        validatedMessage.put("timestamp", System.currentTimeMillis());
+        try {
+            validatedMessage.put("username", messageData.getString("username"));
+            validatedMessage.put("content", messageData.getString("content"));
+        } catch (JSONException exception) {
+            throw new JSONException("Data format or values are not valid and/or missing.");
+        }
+        return validatedMessage;
     }
 
     @Override

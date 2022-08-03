@@ -3,37 +3,34 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 public abstract class AppClientMessage {
-    private final WebSocket senderWS;
-    private final JSONObject messageData;
+    private final JSONObject message;
 
-    public abstract JSONObject messageParser();
+    public abstract JSONObject getParsedMessage();
+    public abstract JSONObject validateMessage(JSONObject message);
     public abstract boolean shouldBroadcast();
     public abstract boolean shouldInsertIntoDB();
 
-    public AppClientMessage(WebSocket senderWS, String message) {
-        this.senderWS = senderWS;
+    public AppClientMessage(JSONObject message) {
+        this.message = message;
+    }
 
+    public static JSONObject validateClientMessage(String message) throws JSONException {
+        JSONObject parsedClientMessage;
         try {
-            this.messageData = new JSONObject(message).getJSONObject("data");
-        } catch (JSONException error) {
-            this.sendMessageError(
-                    "Invalid WS message. Be sure to send stringified JSON.",
-                    400);
-            throw new JSONException("Invalid WS message.");
+            parsedClientMessage = new JSONObject(message);
+        } catch (JSONException exception) {
+            throw new JSONException("Invalid message format. Be sure to send stringified JSON.");
         }
+        try {
+            parsedClientMessage.getString("type");
+            parsedClientMessage.getJSONObject("data");
+        } catch (JSONException exception) {
+            throw new JSONException("'type' and 'data' fields are not in your message or has wrong values.");
+        }
+        return parsedClientMessage;
     }
 
-    public void sendMessageError(String message, int code) {
-        JSONObject response = new JSONObject();
-        response.put("type", "error");
-        response.put("status", code);
-        response.put("message", message);
-        response.put("data", this.messageData);
-
-        this.senderWS.send(response.toString());
-    }
-
-    public JSONObject getMessageData() {
-        return messageData;
+    public JSONObject getMessage() {
+        return message;
     }
 }
