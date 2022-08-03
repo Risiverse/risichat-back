@@ -1,8 +1,32 @@
 # risichat-back
 ## Risichat backend
 
-Made with NodeJs
+Made with Java, Maven, bson, dotenv-java, Java-WebSocket, json, mongodb-driver-sync, slf4j-api, slf4j-log4j12.
 
+### Use with Docker
+To **build** the app, run the command
+```shell
+docker build -t risichat-back:1.0.0 .
+```
+To **run** the app, run the command
+```shell
+docker run -p hostPort:localPort -t risichat-back:1.0.0 .
+```
+``localPort`` being the WS server port you chose in the .env file, and ``hostPort`` your machine port you want to redirect to.
+
+### Build and run it yourself
+You'll need Maven and openjdk 18. <br> <br> 
+To **build** the app into a JAR with all dependencies, run the command
+```shell
+mvn clean compile assembly:single
+```
+If everything is ok, it should generate an executable .jar file into ``./target`` folder. You can place this file wherever you want.<br>
+To **run** the app, you'll have to first create (or move if already created) the .env file in the target folder, or the same folder you placed the .jar file.<br>
+Then, simply run the command
+```shell
+java -jar ./target/risichat-back-jar-with-dependencies.jar
+```
+(or replace ``./target/risichat-back-jar-with-dependencies.jar`` with whatever name you gave it and/or where it is located)
 ## Environment variables
 - ./env
   - WS_HOST
