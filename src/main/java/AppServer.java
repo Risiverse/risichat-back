@@ -16,8 +16,8 @@ public class AppServer extends WebSocketServer {
             dotenv.get("MONGO_DB"),
             dotenv.get("MONGO_COLLECTION"));
 
-    public AppServer(String hostname, int port) {
-        super(new InetSocketAddress(hostname, port));
+    public AppServer(int port) {
+        super(new InetSocketAddress(port));
     }
 
     public String getClientMessageType(String message) {
