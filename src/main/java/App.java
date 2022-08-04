@@ -1,5 +1,4 @@
 import io.github.cdimascio.dotenv.Dotenv;
-import org.json.JSONException;
 
 public class App {
     public static void main(String[] args) {

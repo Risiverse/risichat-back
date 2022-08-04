@@ -30,8 +30,6 @@ public class AppServer extends WebSocketServer {
         senderWS.send(response.toString());
     }
 
-
-
     public void onMessageGlobal(WebSocket senderWS, String message) {
         ClientMessageContent validatedClientMessage;
         Optional<ClientMessage> clientMessageClass;
