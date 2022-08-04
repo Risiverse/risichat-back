@@ -1,11 +1,19 @@
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.Optional;
+
 public sealed interface ClientMessage permits ClientChatMessage {
-    JSONObject getParsedMessage();
-    JSONObject validateMessage(JSONObject message);
+    ClientMessageContent getParsedMessage();
     boolean shouldBroadcast();
     boolean shouldInsertIntoDB();
+
+    static Optional<ClientMessage> getClientMessageClass(ClientMessageContent message) throws JSONException {
+        return switch (message.type()) {
+            case "newMessage" -> Optional.of(new ClientChatMessage(message.data()));
+            default -> Optional.empty();
+        };
+    }
 
     static ClientMessageContent validateClientMessage(String message) throws JSONException {
         JSONObject jsonClientMessage;

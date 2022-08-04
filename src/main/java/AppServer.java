@@ -1,13 +1,13 @@
-import java.net.InetSocketAddress;
-import java.nio.ByteBuffer;
-import java.util.Map;
-
 import io.github.cdimascio.dotenv.Dotenv;
 import org.java_websocket.WebSocket;
 import org.java_websocket.handshake.ClientHandshake;
 import org.java_websocket.server.WebSocketServer;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.net.InetSocketAddress;
+import java.nio.ByteBuffer;
+import java.util.Optional;
 
 public class AppServer extends WebSocketServer {
     private final Dotenv dotenv = Dotenv.load();
@@ -30,16 +30,14 @@ public class AppServer extends WebSocketServer {
         senderWS.send(response.toString());
     }
 
-    public ClientMessage getClientMessageClass(ClientMessageContent message) throws JSONException {
-        return Map.of(
-                "newMessage", new ClientChatMessage(message.data())
-        ).get(message.type());
-    }
+
 
     public void onMessageGlobal(WebSocket senderWS, String message) {
         ClientMessageContent validatedClientMessage;
+        Optional<ClientMessage> clientMessageClass;
         try {
             validatedClientMessage = ClientMessage.validateClientMessage(message);
+            clientMessageClass = ClientMessage.getClientMessageClass(validatedClientMessage);
         } catch (JSONException exception) {
             sendMessageError(
                     exception.getMessage(),
@@ -49,8 +47,7 @@ public class AppServer extends WebSocketServer {
             return;
         }
 
-        ClientMessage clientMessageClass = getClientMessageClass(validatedClientMessage);
-        if (clientMessageClass == null) {
+        if (clientMessageClass.isEmpty()) {
             sendMessageError(
                     "This type of message does not exist.",
                     400,
@@ -61,7 +58,10 @@ public class AppServer extends WebSocketServer {
 
         JSONObject parsedClientMessage;
         try {
-            parsedClientMessage = clientMessageClass.getParsedMessage();
+            parsedClientMessage = clientMessageClass
+                    .get()
+                    .getParsedMessage()
+                    .getJSONformattedContent();
         } catch (JSONException exception) {
             sendMessageError(
                     exception.getMessage(),
@@ -70,10 +70,10 @@ public class AppServer extends WebSocketServer {
                     senderWS);
             return;
         }
-        if (clientMessageClass.shouldBroadcast()) {
+        if (clientMessageClass.get().shouldBroadcast()) {
             broadcast(parsedClientMessage.toString());
         }
-        if (clientMessageClass.shouldInsertIntoDB()) {
+        if (clientMessageClass.get().shouldInsertIntoDB()) {
             appDatabase.insertMessage(parsedClientMessage
                     .getJSONObject("data")
                     .toString()

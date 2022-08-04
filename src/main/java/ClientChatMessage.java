@@ -1,27 +1,43 @@
 import org.json.JSONException;
 import org.json.JSONObject;
 
-public record ClientChatMessage(JSONObject message) implements ClientMessage {
-    @Override
-    public JSONObject getParsedMessage() {
-        JSONObject data = validateMessage(message);
-        JSONObject parsedMessage = new JSONObject();
-        parsedMessage.put("type", "newMessage");
-        parsedMessage.put("data", data);
-        return parsedMessage;
+import java.util.Map;
+import java.util.Objects;
+
+record MessageContent(long timestamp, String username, String content) {
+    public MessageContent {
+        Objects.requireNonNull(username);
+        Objects.requireNonNull(content);
+        if (timestamp < 0) throw new IllegalArgumentException("timestamps bust be > 0.");
+    }
+}
+
+public final class ClientChatMessage implements ClientMessage {
+    private final MessageContent validMessageContent;
+
+    public ClientChatMessage(JSONObject message) {
+        Objects.requireNonNull(message);
+        validMessageContent = validateMessage(message);
     }
 
-    @Override
-    public JSONObject validateMessage(JSONObject messageData) throws JSONException {
-        JSONObject validatedMessage = new JSONObject();
-        validatedMessage.put("timestamp", System.currentTimeMillis());
+    private MessageContent validateMessage(JSONObject message) throws JSONException {
         try {
-            validatedMessage.put("username", messageData.getString("username"));
-            validatedMessage.put("content", messageData.getString("content"));
+            return new MessageContent(
+                    System.currentTimeMillis(),
+                    message.getString("username"),
+                    message.getString("content"));
         } catch (JSONException exception) {
             throw new JSONException("Data format or values are not valid and/or missing.");
         }
-        return validatedMessage;
+    }
+
+    @Override
+    public ClientMessageContent getParsedMessage() {
+        JSONObject parsedMessageContent = new JSONObject(Map.of(
+                "timestamp", validMessageContent.timestamp(),
+                "username", validMessageContent.username(),
+                "content", validMessageContent.content()));
+        return new ClientMessageContent("newMessage", parsedMessageContent);
     }
 
     @Override
