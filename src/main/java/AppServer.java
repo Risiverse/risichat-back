@@ -7,6 +7,7 @@ import org.json.JSONObject;
 
 import java.net.InetSocketAddress;
 import java.nio.ByteBuffer;
+import java.util.Map;
 import java.util.Optional;
 
 public class AppServer extends WebSocketServer {
@@ -21,12 +22,11 @@ public class AppServer extends WebSocketServer {
     }
 
     public void sendMessageError(String message, int code, String data, WebSocket senderWS) {
-        JSONObject response = new JSONObject();
-        response.put("type", "error");
-        response.put("status", code);
-        response.put("message", message);
-        response.put("data", data);
-
+        JSONObject response = new JSONObject(Map.of(
+                "type", "error",
+                "status", code,
+                "message", message,
+                "data", data));
         senderWS.send(response.toString());
     }
 
