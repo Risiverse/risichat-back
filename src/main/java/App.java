@@ -1,20 +1,21 @@
 import io.github.cdimascio.dotenv.Dotenv;
+import org.json.JSONException;
 
 public class App {
     public static void main(String[] args) {
-        Dotenv dotenv = Dotenv.load();
-
-        int port = 8887;
+        var dotenv = Dotenv.load();
+        int port;
 
         try {
             port = Integer.parseInt(dotenv.get("WS_PORT"));
-        } catch (Exception ex) {
-            ex.printStackTrace();
+        } catch (NumberFormatException exception) {
+            System.out.println("WS server port is missing in .env.");
+            return;
         }
 
-        AppServer s = new AppServer(port);
-        s.start();
+        var server = new AppServer(port);
+        server.start();
 
-        System.out.println("Server starting on " + s.getAddress() + " ...");
+        System.out.println("Server starting on " + server.getAddress() + " ...");
     }
 }

@@ -1,11 +1,7 @@
 import org.json.JSONException;
 import org.json.JSONObject;
 
-public class ClientChatMessage extends ClientMessage {
-    public ClientChatMessage(JSONObject message) {
-        super(message);
-    }
-
+public record ClientChatMessage(JSONObject message) implements ClientMessage {
     @Override
     public JSONObject getParsedMessage() {
         JSONObject data = validateMessage(getMessage());
@@ -37,5 +33,10 @@ public class ClientChatMessage extends ClientMessage {
     @Override
     public boolean shouldInsertIntoDB() {
         return true;
+    }
+
+    @Override
+    public JSONObject getMessage() {
+        return message;
     }
 }
