@@ -4,7 +4,7 @@ import org.json.JSONObject;
 public record ClientChatMessage(JSONObject message) implements ClientMessage {
     @Override
     public JSONObject getParsedMessage() {
-        JSONObject data = validateMessage(getMessage());
+        JSONObject data = validateMessage(message);
         JSONObject parsedMessage = new JSONObject();
         parsedMessage.put("type", "newMessage");
         parsedMessage.put("data", data);
@@ -12,8 +12,7 @@ public record ClientChatMessage(JSONObject message) implements ClientMessage {
     }
 
     @Override
-    public JSONObject validateMessage(JSONObject message) throws JSONException {
-        JSONObject messageData = message.getJSONObject("data");
+    public JSONObject validateMessage(JSONObject messageData) throws JSONException {
         JSONObject validatedMessage = new JSONObject();
         validatedMessage.put("timestamp", System.currentTimeMillis());
         try {
@@ -33,10 +32,5 @@ public record ClientChatMessage(JSONObject message) implements ClientMessage {
     @Override
     public boolean shouldInsertIntoDB() {
         return true;
-    }
-
-    @Override
-    public JSONObject getMessage() {
-        return message;
     }
 }

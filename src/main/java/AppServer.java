@@ -30,15 +30,14 @@ public class AppServer extends WebSocketServer {
         senderWS.send(response.toString());
     }
 
-    public ClientMessage getClientMessageClass(WebSocket senderWS, JSONObject message) throws JSONException {
-        String type = message.getString("type");
+    public ClientMessage getClientMessageClass(ClientMessageContent message) throws JSONException {
         return Map.of(
-                "newMessage", new ClientChatMessage(message)
-        ).get(type);
+                "newMessage", new ClientChatMessage(message.data())
+        ).get(message.type());
     }
 
     public void onMessageGlobal(WebSocket senderWS, String message) {
-        JSONObject validatedClientMessage;
+        ClientMessageContent validatedClientMessage;
         try {
             validatedClientMessage = ClientMessage.validateClientMessage(message);
         } catch (JSONException exception) {
@@ -50,7 +49,7 @@ public class AppServer extends WebSocketServer {
             return;
         }
 
-        ClientMessage clientMessageClass = getClientMessageClass(senderWS, validatedClientMessage);
+        ClientMessage clientMessageClass = getClientMessageClass(validatedClientMessage);
         if (clientMessageClass == null) {
             sendMessageError(
                     "This type of message does not exist.",
