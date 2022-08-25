@@ -3,7 +3,6 @@ COPY lib /lib
 COPY src /src
 COPY pom.xml /pom.xml
 COPY .env /.env
-RUN mvn test
 RUN mvn clean compile assembly:single
 
 FROM openjdk:18-alpine
