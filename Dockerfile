@@ -3,7 +3,6 @@ COPY lib /lib
 COPY src /src
 COPY pom.xml /pom.xml
 COPY .env /.env
-RUN mvn clean compile assembly:single
 
 FROM openjdk:18-alpine
 COPY --from=build /target/risichat-back-jar-with-dependencies.jar /risichat-back.jar
