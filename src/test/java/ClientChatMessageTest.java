@@ -49,13 +49,13 @@ class ClientChatMessageTest {
     @Test
     void MessageContent() {
         assertThrows(NullPointerException.class, ()->
-                new MessageContent(42424242, null, "salut"));
+                new ClientChatMessageContent(42424242, null, "salut"));
         assertThrows(NullPointerException.class, ()->
-                new MessageContent(42424242, "marcel", null));
+                new ClientChatMessageContent(42424242, "marcel", null));
         assertThrows(IllegalArgumentException.class, ()->
-                new MessageContent(-124, "marcel", "salut"));
+                new ClientChatMessageContent(-124, "marcel", "salut"));
         assertDoesNotThrow(()->
-                new MessageContent(69696969, "marcel", "salut"));
+                new ClientChatMessageContent(69696969, "marcel", "salut"));
     }
 
     @Test
