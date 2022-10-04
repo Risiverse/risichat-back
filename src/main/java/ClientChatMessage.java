@@ -4,25 +4,17 @@ import org.json.JSONObject;
 import java.util.Map;
 import java.util.Objects;
 
-record MessageContent(long timestamp, String username, String content) {
-    public MessageContent {
-        Objects.requireNonNull(username);
-        Objects.requireNonNull(content);
-        if (timestamp < 0) throw new IllegalArgumentException("timestamps bust be > 0.");
-    }
-}
-
 public final class ClientChatMessage implements ClientMessage {
-    private final MessageContent validMessageContent;
+    private final ClientChatMessageContent validClientChatMessageContent;
 
     public ClientChatMessage(JSONObject message) {
         Objects.requireNonNull(message);
-        validMessageContent = validateMessage(message);
+        validClientChatMessageContent = validateMessage(message);
     }
 
-    private MessageContent validateMessage(JSONObject message) throws JSONException {
+    private ClientChatMessageContent validateMessage(JSONObject message) throws JSONException {
         try {
-            return new MessageContent(
+            return new ClientChatMessageContent(
                     System.currentTimeMillis(),
                     message.getString("username"),
                     message.getString("content"));
@@ -34,9 +26,9 @@ public final class ClientChatMessage implements ClientMessage {
     @Override
     public ClientMessageContent getParsedMessage() {
         JSONObject parsedMessageContent = new JSONObject(Map.of(
-                "timestamp", validMessageContent.timestamp(),
-                "username", validMessageContent.username(),
-                "content", validMessageContent.content()));
+                "timestamp", validClientChatMessageContent.timestamp(),
+                "username", validClientChatMessageContent.username(),
+                "content", validClientChatMessageContent.content()));
         return new ClientMessageContent("newMessage", parsedMessageContent);
     }
 

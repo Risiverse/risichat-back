@@ -21,7 +21,7 @@ docker build -t risichat-back:1.0.0 .
 ```
 To **run** the app, run the command
 ```shell
-docker run -p hostPort:localPort -t risichat-back:1.0.0 .
+docker run -p hostPort:localPort -t risichat-back:1.0.0
 ```
 ``localPort`` being the WS server port you chose in the .env file, and ``hostPort`` your machine port you want to redirect to. <br>
 You may also want to bind Mongodb's port if it runs on the same machine than the container.
@@ -46,7 +46,9 @@ java -jar ./target/risichat-back-jar-with-dependencies.jar
   - MONGO_DB
   - MONGO_COLLECTION
 
-MongoDB hostname should look something like this ``mongodb://host.docker.internal:27017`` if it runs on the same machine as the container.
+ ``MONGO_HOST`` is the MongoDB connection URI.
+
+MongoDB hostname should look something like this ``mongodb://host.docker.internal:27017`` if it runs on the same machine as the container. (``host.docker.internal`` may only work on Windows)
 
 ## DTOs
 All JSON requests should be stringified.
