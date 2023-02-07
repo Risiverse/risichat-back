@@ -1,16 +1,17 @@
 import io.github.cdimascio.dotenv.Dotenv;
 
 public class App {
+    private static int parsePortFromEnvFile(Dotenv dotenv) throws RuntimeException {
+        try {
+            return Integer.parseInt(dotenv.get("WS_PORT"));
+        } catch (NumberFormatException exception) {
+            throw new RuntimeException("WS server port is missing or incorrect in .env file.");
+        }
+    }
+
     public static void main(String[] args) {
         var dotenv = Dotenv.load();
-        int port;
-
-        try {
-            port = Integer.parseInt(dotenv.get("WS_PORT"));
-        } catch (NumberFormatException exception) {
-            System.out.println("WS server port is missing in .env.");
-            return;
-        }
+        int port = parsePortFromEnvFile(dotenv);
 
         var server = new AppServer(port);
         server.start();
