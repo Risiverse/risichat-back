@@ -5,9 +5,9 @@
 - [Environment variables](#environment-variables)
 - [DTOs](#dtos)
   - [Client to server](#client-to-server)
-    - [New message (to server)](#new-message-to-server)
+    - [New message (to server)](#new-message--to-server-)
   - [Server to client](#server-to-client)
-    - [New message (to clients)](#new-message-to-clients)
+    - [New message (to clients)](#new-message--to-clients-)
     - [User status update](#user-status-update)
     - [Other](#other)
 
@@ -41,12 +41,14 @@ java -jar ./target/risichat-back-jar-with-dependencies.jar
 (or replace ``./target/risichat-back-jar-with-dependencies.jar`` with whatever name you gave it and/or where it is located)
 ## Environment variables
 - ./env
-  - WS_PORT
-  - MONGO_HOST
-  - MONGO_DB
-  - MONGO_COLLECTION
+```
+WS_PORT=
+MONGO_HOST=
+MONGO_DB=
+MONGO_COLLECTION=
+```
 
- ``MONGO_HOST`` is the MongoDB connection URI.
+``MONGO_HOST`` is the MongoDB connection URI.
 
 MongoDB hostname should look something like this ``mongodb://host.docker.internal:27017`` if it runs on the same machine as the container. (``host.docker.internal`` may only work on Windows)
 
